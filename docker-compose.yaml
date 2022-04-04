@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+
+  golang:
+    container_name: golang
+    image: mthsena/fc_docker_challenge_golang
+    build:
+      context: ./golang
+
+  nginx:
+    container_name: nginx
+    image: mthsena/fc_docker_challenge_nginx
+    build:
+      context: ./nginx
+    ports:
+      - 8080:80
+    networks:
+      - fc_docker_challenge_network
+
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - fc_docker_challenge_network
+    environment:
+      - MYSQL_DATABASE=fc_docker_challenge_database
+      - MYSQL_ROOT_PASSWORD=fc_docker_challenge_password
+
+  node:
+    container_name: node
+    image: mthsena/fc_docker_challenge_node
+    build:
+      context: ./node
+    networks:
+      - fc_docker_challenge_network
+
+networks:
+  fc_docker_challenge_network:
+    driver: bridge
